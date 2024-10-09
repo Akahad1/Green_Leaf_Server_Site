@@ -9,11 +9,12 @@ const router = express.Router();
 router.post(
   "/createPost",
   // validateRequest(UserValidation.userValidationSchema),
-  //   multerUpload.single("image"),
+  multerUpload.single("image"),
   postController.createPost
 );
-// router.post("/auth/login", userController.loginUser);
+
 router.get("/", postController.getPost);
 router.get("/:id", postController.getSpacificPost);
 router.put("/:id", postController.updateSpacificPost);
+router.delete("/:id", postController.deleteSpacificPost);
 export const postRouter = router;

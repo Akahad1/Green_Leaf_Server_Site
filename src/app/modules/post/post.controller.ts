@@ -5,8 +5,11 @@ import { PostServices } from "./post.services";
 
 const createPost = catchAsync(async (req, res) => {
   console.log(req.body);
-  // console.log(req.file);
-  const result = await PostServices.createPostIntoDB(req.body);
+  console.log(req.file);
+  const result = await PostServices.createPostIntoDB({
+    ...JSON.parse(req.body.data),
+    image: req.file?.path,
+  });
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -33,6 +36,16 @@ const getSpacificPost = catchAsync(async (req, res) => {
     data: result,
   });
 });
+const deleteSpacificPost = catchAsync(async (req, res) => {
+  const id = req.params.id;
+  const result = await PostServices.deleteSpacificPostFromDB(id);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "delete Spacific Post  Successfully",
+    data: result,
+  });
+});
 const updateSpacificPost = catchAsync(async (req, res) => {
   const id = req.params.id;
   const body = req.body;
@@ -50,4 +63,5 @@ export const postController = {
   getPost,
   getSpacificPost,
   updateSpacificPost,
+  deleteSpacificPost,
 };

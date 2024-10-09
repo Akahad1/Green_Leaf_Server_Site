@@ -14,20 +14,22 @@ const createPostIntoDB = async (payload: TPost) => {
 };
 
 const getPostFromDB = async () => {
-  const result = await Post.find();
+  const result = await Post.find().populate("user");
   return result;
 };
 const getSpacificPostFromDB = async (id: string) => {
-  const result = await Post.findById(id);
+  const result = await Post.findById(id).populate("user");
+  return result;
+};
+const deleteSpacificPostFromDB = async (id: string) => {
+  const result = await Post.findByIdAndDelete(id);
   return result;
 };
 const updatePostFromDB = async (id: string, payload: TPost) => {
-  console.log(id);
-  console.log(payload);
   const result = await Post.findOneAndUpdate({ _id: id }, payload, {
     new: true,
   });
-  console.log(result);
+
   return result;
 };
 
@@ -36,4 +38,5 @@ export const PostServices = {
   getPostFromDB,
   getSpacificPostFromDB,
   updatePostFromDB,
+  deleteSpacificPostFromDB,
 };
