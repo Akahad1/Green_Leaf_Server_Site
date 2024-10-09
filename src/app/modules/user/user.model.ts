@@ -32,6 +32,10 @@ const userSchma = new Schema<TUser>({
   image: {
     type: String,
   },
+  coverImage: {
+    type: String,
+    default: "",
+  },
   passwordChange: {
     type: Boolean,
     default: false,

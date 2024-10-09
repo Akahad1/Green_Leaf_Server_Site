@@ -27,6 +27,16 @@ const getUserFromDB = async (query: any) => {
     return user;
   }
 };
+const getSpacificUserFromDB = async (id: any) => {
+  const result = await User.findById({ _id: id });
+  return result;
+};
+const UpdateSpacificUserFromDB = async (id: any, payload: TUser) => {
+  const result = await User.findOneAndUpdate({ _id: id }, payload, {
+    new: true,
+  });
+  return result;
+};
 const LoginUserFromDB = async (payload: any) => {
   const user = await User.findOne({ email: payload.email });
 
@@ -96,4 +106,6 @@ export const userServices = {
   createUserIntoDB,
   getUserFromDB,
   LoginUserFromDB,
+  getSpacificUserFromDB,
+  UpdateSpacificUserFromDB,
 };

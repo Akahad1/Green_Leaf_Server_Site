@@ -13,4 +13,6 @@ router.post(
 );
 router.post("/auth/login", userController.loginUser);
 router.get("/user", userController.getUser);
+router.get("/user/:id", userController.getSpacificUser);
+router.put("/user/:id", userController.updateSpacificUser);
 export const userRoute = router;

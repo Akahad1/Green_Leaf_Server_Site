@@ -9,6 +9,7 @@ export interface TUser {
   address: string;
   details: string;
   image: string;
+  coverImage: string;
   passwordChange: boolean;
   favourite: Types.ObjectId[];
   followers: Types.ObjectId[];

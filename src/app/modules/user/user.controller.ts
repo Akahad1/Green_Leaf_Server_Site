@@ -4,7 +4,6 @@ import { sendResponse } from "../../utils/sendResponse";
 import { userServices } from "./user.services";
 
 const createUser = catchAsync(async (req, res) => {
-  // const userData = req.body;
   console.log(req.body);
   console.log(req.file);
   const result = await userServices.createUserIntoDB({
@@ -28,6 +27,27 @@ const getUser = catchAsync(async (req, res) => {
     data: result,
   });
 });
+const getSpacificUser = catchAsync(async (req, res) => {
+  const id = req.params.id;
+  const result = await userServices.getSpacificUserFromDB(id);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Get  spacific User  successfully",
+    data: result,
+  });
+});
+const updateSpacificUser = catchAsync(async (req, res) => {
+  const id = req.params.id;
+  const body = req.body;
+  const result = await userServices.UpdateSpacificUserFromDB(id, body);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Update  spacific User  successfully",
+    data: result,
+  });
+});
 const loginUser = catchAsync(async (req, res) => {
   const result = await userServices.LoginUserFromDB(req.body);
 
@@ -48,4 +68,6 @@ export const userController = {
   createUser,
   getUser,
   loginUser,
+  getSpacificUser,
+  updateSpacificUser,
 };
