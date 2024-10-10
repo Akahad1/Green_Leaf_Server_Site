@@ -13,19 +13,76 @@ const createPostIntoDB = async (payload: TPost) => {
   return result;
 };
 
-const getPostFromDB = async () => {
-  const result = await Post.find().populate("user");
+const getPostFromDB = async (querys: any) => {
+  const { catagory } = querys;
+  const query: any = {};
+
+  // Fetch posts based on the query, and sort them by 'upvote' in descending order
+  const result = await Post.find(catagory ? { catagory } : {})
+    .populate("user") // Populate user data if needed
+    .sort({ upvote: -1 });
   return result;
 };
 const getSpacificPostFromDB = async (id: string) => {
-  const result = await Post.findById(id).populate("user");
+  const result = await Post.find({ user: id }).populate("user");
   return result;
 };
 const deleteSpacificPostFromDB = async (id: string) => {
   const result = await Post.findByIdAndDelete(id);
   return result;
 };
-const updatePostFromDB = async (id: string, payload: TPost) => {
+const updatePostFromDB = async (id: string, payload: any) => {
+  const post = await Post.findById(id);
+
+  if (!post) {
+    throw new Error("Post not found");
+  }
+
+  const alreadyUpvoted = post.upvotedUsers.includes(payload.user);
+  const alreadyDownvoted = post.downvotedUsers.includes(payload.user);
+
+  // Logic to handle votesdownvotedUsers
+  if (payload.vote === "upvote") {
+    if (alreadyUpvoted) {
+      post.upvote -= 1; // Remove upvote if already upvoted
+      post.upvotedUsers = post.upvotedUsers.filter(
+        (user) => user !== payload.user
+      );
+    } else {
+      post.upvote += 1;
+      post.upvotedUsers.push(payload.user);
+
+      // If the user had downvoted before, remove the downvote
+      if (alreadyDownvoted) {
+        post.downvote -= 1;
+        post.downvotedUsers = post.downvotedUsers.filter(
+          (user) => user !== payload.user
+        );
+      }
+    }
+    const updatedPost = await post.save();
+    return updatedPost;
+  } else if (payload.vote === "downvote") {
+    if (alreadyDownvoted) {
+      post.downvote -= 1; // Remove downvote if already downvoted
+      post.downvotedUsers = post.downvotedUsers.filter(
+        (user) => user !== payload.user
+      );
+    } else {
+      post.downvote += 1;
+      post.downvotedUsers.push(payload.user);
+
+      // If the user had upvoted before, remove the upvote
+      if (alreadyUpvoted) {
+        post.upvote -= 1;
+        post.upvotedUsers = post.upvotedUsers.filter(
+          (user) => user !== payload.user
+        );
+      }
+    }
+    const updatedPost = await post.save();
+    return updatedPost;
+  }
   const result = await Post.findOneAndUpdate({ _id: id }, payload, {
     new: true,
   });

@@ -10,7 +10,7 @@ router.post(
   commentController.createComment
 );
 
-router.get("/", commentController.getComment);
+router.get("/:id", commentController.getComment);
 
 router.put("/:id", commentController.updateSpacificComment);
 router.delete("/:id", commentController.deleteSpacificComment);

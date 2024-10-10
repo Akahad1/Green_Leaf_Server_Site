@@ -16,27 +16,16 @@ const createCommentIntoDB = async (payload: TComment) => {
   const postUserId = posts?.user.toString();
   console.log("postUserID", postUserId);
   console.log("user", user);
-  if (user.toString() !== postUserId) {
-    throw new AppError(httpStatus.BAD_REQUEST, "Post User is not same");
-  }
+
   if (!posts) {
-    throw new AppError(httpStatus.NOT_FOUND, "User is not exist");
+    throw new AppError(httpStatus.NOT_FOUND, "post is not exist");
   }
   const result = await Comment.create(payload);
   return result;
 };
-const getCommentFromDB = async (query: any) => {
-  const userId = new Types.ObjectId(query.userId);
-  const postId = new Types.ObjectId(query.postId);
+const getCommentFromDB = async (id: any) => {
+  const result = await Comment.find({ post: id });
 
-  const result = await Comment.aggregate([
-    {
-      $match: {
-        user: userId,
-        post: postId,
-      },
-    },
-  ]);
   return result;
 };
 const deleteCommentFromDB = async (id: string) => {

@@ -1,88 +1,70 @@
-import { NextFunction, Request, Response } from "express";
-import { ZodError } from "zod";
-import config from "../config";
+import { Request, Response, NextFunction } from "express";
 
-import { TErrorSources } from "../interface/error";
-import handleZodError from "../error/handleZodError";
-import handleValidationError from "../error/handleValidationError";
-import handleCastError from "../error/handleCastError";
-import handleDuplicateError from "../error/handleDuplicateError";
-import { AppError } from "../error/AppError";
+// Custom error class to handle various error types
+class AppError extends Error {
+  statusCode: number;
+  status: string;
+  isOperational: boolean;
 
+  constructor(message: string, statusCode: number) {
+    super(message);
+    this.statusCode = statusCode;
+    this.status = `${statusCode}`.startsWith("4") ? "fail" : "error";
+    this.isOperational = true;
+
+    Error.captureStackTrace(this, this.constructor);
+  }
+}
+
+// Global error handler middleware
 const globalErrorHandler = (
   err: any,
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  //setting default values
-  let statusCode = 500;
-  let message = "Something went wrong!";
-  let errorSources: TErrorSources = [
-    {
-      path: "",
-      message: "Something went wrong",
-    },
-  ];
+  // Set default values
+  err.statusCode = err.statusCode || 500;
+  err.status = err.status || "error";
 
-  if (err instanceof ZodError) {
-    const simplifiedError = handleZodError(err);
-    statusCode = simplifiedError?.statusCode;
-    message = simplifiedError?.message;
-    errorSources = simplifiedError?.errorSources;
-  } else if (err?.name === "ValidationError") {
-    const simplifiedError = handleValidationError(err);
-    statusCode = simplifiedError?.statusCode;
-    message = simplifiedError?.message;
-    errorSources = simplifiedError?.errorSources;
-  } else if (err?.name === "CastError") {
-    const simplifiedError = handleCastError(err);
-    statusCode = simplifiedError?.statusCode;
-    message = simplifiedError?.message;
-    errorSources = simplifiedError?.errorSources;
-  } else if (err?.code === 11000) {
-    const simplifiedError = handleDuplicateError(err);
-    statusCode = simplifiedError?.statusCode;
-    message = simplifiedError?.message;
-    errorSources = simplifiedError?.errorSources;
-  } else if (err instanceof AppError) {
-    statusCode = err?.statusCode;
-    message = err.message;
-    errorSources = [
-      {
-        path: "",
-        message: err?.message,
-      },
-    ];
-  } else if (err instanceof Error) {
-    message = err.message;
-    errorSources = [
-      {
-        path: "",
-        message: err?.message,
-      },
-    ];
+  if (process.env.NODE_ENV === "development") {
+    res.status(err.statusCode).json({
+      status: err.status,
+      message: err.message,
+      stack: err.stack,
+    });
+  } else if (process.env.NODE_ENV === "production") {
+    let error = { ...err };
+    error.message = err.message;
+
+    // Handle Mongoose-specific errors
+    if (err.name === "ValidationError") error = handleValidationError(err);
+    if (err.code && err.code === 11000) error = handleDuplicateKeyError(err);
+    if (err.name === "CastError") error = handleCastErrorDB(err);
+
+    res.status(error.statusCode || 500).json({
+      status: error.status || "error",
+      message: error.message || "Something went wrong!",
+    });
   }
-
-  //ultimate return
-  return res.status(statusCode).json({
-    success: false,
-    message,
-    errorSources,
-    err,
-    stack: config.NODE_ENV === "development" ? err?.stack : null,
-  });
 };
 
-export default globalErrorHandler;
+// Helper functions to handle specific Mongoose errors
+const handleValidationError = (err: any) => {
+  const messages = Object.values(err.errors).map((el: any) => el.message);
+  return new AppError(`Invalid input data. ${messages.join(". ")}`, 400);
+};
 
-//pattern
-/*
-success
-message
-errorSources:[
-  path:'',
-  message:''
-]
-stack
-*/
+const handleDuplicateKeyError = (err: any) => {
+  const key = Object.keys(err.keyValue)[0];
+  return new AppError(
+    `Duplicate field value: ${key}. Please use another value!`,
+    400
+  );
+};
+
+const handleCastErrorDB = (err: any) => {
+  return new AppError(`Invalid ${err.path}: ${err.value}.`, 400);
+};
+
+export { globalErrorHandler, AppError };

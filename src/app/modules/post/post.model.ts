@@ -14,6 +14,8 @@ const PostSchema = new Schema<TPost>(
       enum: ["Vegetables", "Flowers", "Herbs", "Fruits"],
       required: true,
     },
+    upvotedUsers: [{ type: Schema.Types.ObjectId, ref: "User" }], // To track users who upvoted
+    downvotedUsers: [{ type: Schema.Types.ObjectId, ref: "User" }], // T
   },
   {
     timestamps: true,

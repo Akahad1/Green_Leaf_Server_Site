@@ -4,7 +4,8 @@ import cors from "cors";
 
 import router from "./app/router/router";
 import notFound from "./app/middleware/notFound";
-import globalErrorHandler from "./app/middleware/globalErrorhandler";
+import { globalErrorHandler } from "./app/middleware/globalErrorhandler";
+
 const app: Application = express();
 app.use(express.json());
 app.use(cors({ origin: ["http://localhost:3000"], credentials: true }));
@@ -14,6 +15,6 @@ app.get("/", (req: Request, res: Response) => {
 
 app.use("/api/a6", router);
 
-// app.use(globalErrorHandler);
+app.use(globalErrorHandler);
 // app.use(notFound);
 export default app;

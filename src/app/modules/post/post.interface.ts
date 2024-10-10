@@ -7,6 +7,8 @@ export interface TPost {
   premium: boolean;
   upvote: number;
   downvote: number;
+  upvotedUsers: Types.ObjectId[];
+  downvotedUsers: Types.ObjectId[];
 
   catagory: "Vegetables" | "Flowers" | "Herbs" | "Fruits";
 }

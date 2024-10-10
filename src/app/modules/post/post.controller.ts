@@ -4,10 +4,10 @@ import { sendResponse } from "../../utils/sendResponse";
 import { PostServices } from "./post.services";
 
 const createPost = catchAsync(async (req, res) => {
-  console.log(req.body);
-  console.log(req.file);
+  console.log("body data", JSON.stringify(req.body, null, 2));
+  console.log("file data", req.file);
   const result = await PostServices.createPostIntoDB({
-    ...JSON.parse(req.body.data),
+    ...req.body,
     image: req.file?.path,
   });
   sendResponse(res, {
@@ -18,7 +18,8 @@ const createPost = catchAsync(async (req, res) => {
   });
 });
 const getPost = catchAsync(async (req, res) => {
-  const result = await PostServices.getPostFromDB();
+  const query = req.query;
+  const result = await PostServices.getPostFromDB(query);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
