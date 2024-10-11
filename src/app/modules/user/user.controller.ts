@@ -4,10 +4,10 @@ import { sendResponse } from "../../utils/sendResponse";
 import { userServices } from "./user.services";
 
 const createUser = catchAsync(async (req, res) => {
-  console.log(req.body);
-  console.log(req.file);
+  console.log("body data", JSON.stringify(req.body, null, 2));
+  console.log("file data", req.file);
   const result = await userServices.createUserIntoDB({
-    ...JSON.parse(req.body.data),
+    ...req.body,
     image: req.file?.path,
   });
   sendResponse(res, {
@@ -40,11 +40,32 @@ const getSpacificUser = catchAsync(async (req, res) => {
 const updateSpacificUser = catchAsync(async (req, res) => {
   const id = req.params.id;
   const body = req.body;
-  const result = await userServices.UpdateSpacificUserFromDB(id, body);
+  console.log("body data", JSON.stringify(req.body, null, 2));
+  console.log("file data", req.file);
+  const result = await userServices.UpdateSpacificUserFromDB(id, {
+    ...req.body,
+    image: req.file?.path,
+  });
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: "Update  spacific User  successfully",
+    data: result,
+  });
+});
+const updateCoverPhoto = catchAsync(async (req, res) => {
+  const id = req.params.id;
+  const body = req.body;
+  console.log("body data", JSON.stringify(req.body, null, 2));
+  console.log("file data", req.file);
+  const result = await userServices.coverImageFromDB(id, {
+    ...req.body,
+    coverImage: req.file?.path,
+  });
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Update  coverImage  successfully",
     data: result,
   });
 });
@@ -70,4 +91,5 @@ export const userController = {
   loginUser,
   getSpacificUser,
   updateSpacificUser,
+  updateCoverPhoto,
 };

@@ -31,6 +31,7 @@ const userSchma = new Schema<TUser>({
   },
   image: {
     type: String,
+    default: "",
   },
   coverImage: {
     type: String,

@@ -31,7 +31,45 @@ const getSpacificUserFromDB = async (id: any) => {
   const result = await User.findById({ _id: id });
   return result;
 };
-const UpdateSpacificUserFromDB = async (id: any, payload: TUser) => {
+const UpdateSpacificUserFromDB = async (id: any, payload: any) => {
+  const user = await User.findById(id);
+  const myUser = await User.findById(payload.followerId);
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+  if (!myUser) {
+    throw new Error("User not found");
+  }
+
+  // Check if the user is already followed by the followerId
+  const isFollowing = user.followers.includes(payload.followerId);
+  const isfollowed = user.followers.includes(id);
+
+  if (isFollowing) {
+    user.followers = user.followers.filter(
+      (id) => id.toString() !== payload.followerId
+    );
+  } else {
+    // Follow the user (add followerId to the array)
+    user.followers.push(payload.followerId);
+  }
+  if (isfollowed) {
+    myUser.followed = myUser.followed.filter(
+      (users) => users.toString() !== id
+    );
+  } else {
+    myUser.followed.push(id);
+  }
+  // Save the updated user
+  await user.save();
+  await myUser.save();
+  const result = await User.findOneAndUpdate({ _id: id }, payload, {
+    new: true,
+  });
+  return result;
+};
+const coverImageFromDB = async (id: any, payload: TUser) => {
   const result = await User.findOneAndUpdate({ _id: id }, payload, {
     new: true,
   });
@@ -108,4 +146,5 @@ export const userServices = {
   LoginUserFromDB,
   getSpacificUserFromDB,
   UpdateSpacificUserFromDB,
+  coverImageFromDB,
 };

@@ -14,13 +14,19 @@ const createPostIntoDB = async (payload: TPost) => {
 };
 
 const getPostFromDB = async (querys: any) => {
-  const { catagory } = querys;
+  const { catagory, search } = querys;
+  console.log(catagory, search);
   const query: any = {};
 
-  // Fetch posts based on the query, and sort them by 'upvote' in descending order
-  const result = await Post.find(catagory ? { catagory } : {})
-    .populate("user") // Populate user data if needed
-    .sort({ upvote: -1 });
+  if (search) {
+    query.text = { $regex: search, $options: "i" }; // Case-insensitive search
+  }
+
+  if (catagory && catagory !== "") {
+    query.catagory = catagory;
+  }
+
+  const result = await Post.find(query).populate("user").sort({ upvote: -1 });
   return result;
 };
 const getSpacificPostFromDB = async (id: string) => {

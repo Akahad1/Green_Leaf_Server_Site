@@ -14,5 +14,14 @@ router.post(
 router.post("/auth/login", userController.loginUser);
 router.get("/user", userController.getUser);
 router.get("/user/:id", userController.getSpacificUser);
-router.put("/user/:id", userController.updateSpacificUser);
+router.put(
+  "/user/:id",
+  multerUpload.single("image"),
+  userController.updateSpacificUser
+);
+router.put(
+  "/user/cover/:id",
+  multerUpload.single("cover"),
+  userController.updateCoverPhoto
+);
 export const userRoute = router;
