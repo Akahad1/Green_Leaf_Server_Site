@@ -50,13 +50,13 @@ const userSchma = new Schema<TUser>({
   followers: [
     {
       type: Schema.Types.ObjectId,
-      ref: "user", // Assumed self-reference to other users
+      ref: "User", // Assumed self-reference to other users
     },
   ],
   followed: [
     {
       type: Schema.Types.ObjectId,
-      ref: "user", // Assumed self-reference to other users
+      ref: "User", // Assumed self-reference to other users
     },
   ],
   verified: {

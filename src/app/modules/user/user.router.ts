@@ -1,14 +1,16 @@
 import express from "express";
 import { userController } from "./user.controller";
-import validateRequest from "../../middleware/validationRequest";
+
 import { UserValidation } from "./user.validation";
 import { multerUpload } from "../../config/multer.config";
+import { USER_ROLE } from "./user.constent";
+import auth from "../../middleware/auth";
 const router = express.Router();
 
 router.post(
   "/auth/signup",
   // validateRequest(UserValidation.userValidationSchema),
-  multerUpload.single("image"),
+
   userController.createUser
 );
 router.post("/auth/login", userController.loginUser);
@@ -23,5 +25,10 @@ router.put(
   "/user/cover/:id",
   multerUpload.single("cover"),
   userController.updateCoverPhoto
+);
+router.put(
+  "/user/image/:id",
+  multerUpload.single("image"),
+  userController.updateImage
 );
 export const userRoute = router;

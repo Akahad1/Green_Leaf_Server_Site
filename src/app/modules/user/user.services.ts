@@ -20,10 +20,26 @@ const createUserIntoDB = async (userData: TUser) => {
 const getUserFromDB = async (query: any) => {
   const { email } = query;
   if (email) {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email })
+      .populate({
+        path: "followed",
+        select: "name email image", // Select specific fields to return for followed users
+      })
+      .populate({
+        path: "followers",
+        select: "name email image", // Select specific fields to return for followers
+      });
     return user;
   } else {
-    const user = await User.find();
+    const user = await User.find()
+      .populate({
+        path: "followed",
+        select: "name email image", // Select specific fields to return for followed users
+      })
+      .populate({
+        path: "followers",
+        select: "name email image", // Select specific fields to return for followers
+      });
     return user;
   }
 };
@@ -44,32 +60,42 @@ const UpdateSpacificUserFromDB = async (id: any, payload: any) => {
 
   // Check if the user is already followed by the followerId
   const isFollowing = user.followers.includes(payload.followerId);
-  const isfollowed = user.followers.includes(id);
+  const isfollowed = user.followed.includes(id);
 
   if (isFollowing) {
     user.followers = user.followers.filter(
       (id) => id.toString() !== payload.followerId
     );
+    await user.save();
   } else {
     // Follow the user (add followerId to the array)
     user.followers.push(payload.followerId);
+    await user.save();
   }
   if (isfollowed) {
     myUser.followed = myUser.followed.filter(
       (users) => users.toString() !== id
     );
+    await myUser.save();
   } else {
     myUser.followed.push(id);
+    await myUser.save();
   }
   // Save the updated user
-  await user.save();
-  await myUser.save();
+
   const result = await User.findOneAndUpdate({ _id: id }, payload, {
     new: true,
   });
   return result;
 };
+
 const coverImageFromDB = async (id: any, payload: TUser) => {
+  const result = await User.findOneAndUpdate({ _id: id }, payload, {
+    new: true,
+  });
+  return result;
+};
+const updateImageFromDB = async (id: any, payload: TUser) => {
   const result = await User.findOneAndUpdate({ _id: id }, payload, {
     new: true,
   });
@@ -147,4 +173,5 @@ export const userServices = {
   getSpacificUserFromDB,
   UpdateSpacificUserFromDB,
   coverImageFromDB,
+  updateImageFromDB,
 };

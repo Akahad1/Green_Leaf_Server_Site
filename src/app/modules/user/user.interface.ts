@@ -1,4 +1,5 @@
 import { Types } from "mongoose";
+import { USER_ROLE } from "./user.constent";
 
 export interface TUser {
   name: string;
@@ -16,3 +17,4 @@ export interface TUser {
   followed: Types.ObjectId[];
   verified: boolean;
 }
+export type TUserRole = keyof typeof USER_ROLE;
