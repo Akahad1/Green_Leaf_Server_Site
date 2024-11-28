@@ -7,7 +7,7 @@ Green_leaf
 #URl
 
 - server_url =https://key-craft-server-site.vercel.app/
-- client-url= https://assinment6-theta.vercel.app
+- client-url= https://green-leaf-theta.vercel.app
 
 ## Technology Stack
 
