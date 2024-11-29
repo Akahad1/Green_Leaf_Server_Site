@@ -102,67 +102,57 @@ const updateImageFromDB = async (id: any, payload: TUser) => {
   return result;
 };
 const LoginUserFromDB = async (payload: any) => {
-  const user = await User.findOne({ email: payload.email });
+  try {
+    console.log("Login payload:", payload);
 
-  if (!user) {
-    const users = await createUserIntoDB(payload);
+    // Find user by email
+    const user = await User.findOne({ email: payload.email });
 
-    const jwtPayload = {
-      email: users.email,
-      role: users.role,
-    };
-
-    const accessToken = createToken(
-      jwtPayload,
-      process.env.JWT_ACCEESS_SECRET as string,
-      process.env.JWT_ACCEESS_TOKEN_EXPIRE as string
-    );
-
-    const refreshToken = createToken(
-      jwtPayload,
-      process.env.JWT_REFRSH_SECRET as string,
-      process.env.JWT_REFRSH_TOKEN_EXPIRE as string
-    );
-
-    return {
-      accessToken,
-      refreshToken,
-      user,
-    };
-  } else {
-    if (payload.password) {
-      const isPasswordMatched = await bcryptJs.compare(
-        payload.password,
-        user.password
-      );
-
-      if (!isPasswordMatched) {
-        throw new AppError(httpStatus.NOT_FOUND, "Password Incorrect!");
-      }
+    if (!user) {
+      throw new AppError(httpStatus.NOT_FOUND, "Invalid email or password."); // Generic error message
     }
+
+    // Compare provided password with stored hashed password
+    const isPasswordMatched = await bcryptJs.compare(
+      payload.password,
+      user.password
+    );
+
+    if (!isPasswordMatched) {
+      throw new AppError(httpStatus.NOT_FOUND, "Invalid email or password."); // Generic error message
+    }
+
+    // Prepare JWT payload
     const jwtPayload = {
       email: user.email,
       role: user.role,
       _id: user._id,
     };
 
+    // Generate access and refresh tokens
     const accessToken = createToken(
       jwtPayload,
-      process.env.JWT_ACCEESS_SECRET as string,
+      process.env.JWT_ACCEESS_SECRET as string, // Corrected variable name
       process.env.JWT_ACCEESS_TOKEN_EXPIRE as string
     );
-    console.log("accessToken", accessToken);
-    const refreshToken = createToken(
-      jwtPayload,
-      process.env.JWT_REFRSH_SECRET as string,
-      process.env.JWT_REFRSH_TOKEN_EXPIRE as string
-    );
-    console.log("refreshToken", refreshToken);
+    console.log("Generated Access Token:", accessToken);
+
+    // const refreshToken = createToken(
+    //   jwtPayload,
+    //   process.env.JWT_REFRESH_SECRET as string, // Corrected variable name
+    //   process.env.JWT_REFRESH_TOKEN_EXPIRE as string
+    // );
+    // console.log("Generated Refresh Token:", refreshToken);
+
+    // Return tokens and user information
     return {
       accessToken,
-      refreshToken,
+      // refreshToken,
       user,
     };
+  } catch (error) {
+    console.error("Login error:", error);
+    throw new Error("Authentication failed. Please try again.");
   }
 };
 

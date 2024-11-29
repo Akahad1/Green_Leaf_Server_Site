@@ -14,8 +14,8 @@ const createPostIntoDB = async (payload: TPost) => {
 };
 
 const getPostFromDB = async (querys: any) => {
-  const { catagory, search } = querys;
-  console.log(catagory, search);
+  const { catagory, search, premium } = querys; // Include premium in the query parameters
+  console.log(catagory, search, premium);
   const query: any = {};
 
   if (search) {
@@ -26,9 +26,16 @@ const getPostFromDB = async (querys: any) => {
     query.catagory = catagory;
   }
 
-  const result = await Post.find(query).populate("user").sort({ upvote: -1 });
+  if (premium !== undefined && premium !== "") {
+    query.premium = premium === "true"; // Convert premium to a boolean
+  }
+
+  const result = await Post.find(query)
+    .populate("user")
+    .sort({ upvote: -1 }); // Sort by upvotes in descending order
   return result;
 };
+
 const getSpacificPostFromDB = async (id: string) => {
   const result = await Post.find({ user: id }).populate("user");
   return result;
