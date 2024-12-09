@@ -44,11 +44,7 @@ The server-side of **Green Leaf** is built with modern web technologies to ensur
    - Analytics endpoints for tracking user activity and premium content engagement.
 
 ### Folder Structure
-
-#URl
-
-- server_url =https://key-craft-server-site.vercel.app/
-- client-url= https://green-leaf-theta.vercel.app
+/server ├── /config # Configuration files (e.g., database, environment variables) ├── /controllers # Logic for handling requests and responses ├── /models # Mongoose schemas for MongoDB collections ├── /routes # API endpoints for different features ├── /middleware # Authentication, error handling, etc. ├── /utils # Utility functions (e.g., helper methods) └── server.js # Main entry point of the server
 
 
 ### How to Run the Server
@@ -60,13 +56,17 @@ The server-side of **Green Leaf** is built with modern web technologies to ensur
 2. npm install
  
 3, PORT=5000
-MONGO_URI=your_mongodb_connection_string
-JWT_SECRET=your_secret_key
-CLOUDINARY_NAME=your_cloudinary_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
-STRIPE_SECRET_KEY=your_stripe_secret_key
+MONGO_URI=your_mongodb_connection_string,
+JWT_SECRET=your_secret_key,
+CLOUDINARY_NAME=your_cloudinary_name,
+CLOUDINARY_API_KEY=your_api_key,
+CLOUDINARY_API_SECRET=your_api_secret,
+STRIPE_SECRET_KEY=your_stripe_secret_key,
 
 4, npm start
 
+#URl
+
+- server_url =https://key-craft-server-site.vercel.app/
+- client-url= https://green-leaf-theta.vercel.app
 
