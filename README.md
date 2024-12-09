@@ -44,72 +44,54 @@ The server-side of **Green Leaf** is built with modern web technologies to ensur
    - Analytics endpoints for tracking user activity and premium content engagement.
 
 ### Folder Structure
-/src
- ├── /app
- │   ├── /config
- │   │    ├── multer.config.ts       # Configuration for Multer file uploads
- │   │    ├── index.ts               # Main configuration entry
- │   │    └── cloudinary.config.ts   # Configuration for Cloudinary
- │   │
- │   ├── /error
- │   │    ├── handleCastError.ts       # Handler for MongoDB CastError
- │   │    ├── handleZodError.ts        # Handler for Zod validation errors
- │   │    ├── handleValidationError.ts # Handler for general validation errors
- │   │    ├── handleDuplicateError.ts  # Handler for duplicate key errors
- │   │    └── error.ts                 # General error utilities
- │   │
- │   ├── /interface
- │   │    ├── notFound.ts             # Interface for handling 404 errors
- │   │    ├── index.d.ts              # Global TypeScript declarations
- │   │    └── error.ts                # Error handling interfaces
- │   │
- │   ├── /middleware
- │   │    ├── validationRequest.ts    # Middleware to validate incoming requests
- │   │    ├── globalErrorHandler.ts   # Middleware for handling global errors
- │   │    └── auth.ts                 # Authentication middleware
- │   │
- │   ├── /modules
- │   │    ├── /comment
- │   │    │    ├── comment.services.ts   # Business logic for comments
- │   │    │    ├── comment.router.ts     # API routes for comments
- │   │    │    ├── comment.model.ts      # Mongoose schema for comments
- │   │    │    ├── comment.interface.ts  # Interface for comments
- │   │    │    └── comment.controller.ts # Controller for comment endpoints
- │   │    │
- │   │    ├── /user
- │   │    │    ├── user.validation.ts    # Validation schema for users
- │   │    │    ├── user.utils.ts         # Utility functions for users
- │   │    │    ├── user.services.ts      # Business logic for users
- │   │    │    ├── user.router.ts        # API routes for users
- │   │    │    ├── user.model.ts         # Mongoose schema for users
- │   │    │    ├── user.interface.ts     # Interface for users
- │   │    │    ├── user.controller.ts    # Controller for user endpoints
- │   │    │    └── user.constants.ts     # Constants related to users
- │   │    │
- │   │    ├── /post
- │   │    │    ├── post.validation.ts    # Validation schema for posts
- │   │    │    ├── post.services.ts      # Business logic for posts
- │   │    │    ├── post.router.ts        # API routes for posts
- │   │    │    ├── post.model.ts         # Mongoose schema for posts
- │   │    │    ├── post.interface.ts     # Interface for posts
- │   │    │    └── post.controller.ts    # Controller for post endpoints
- │   │    │
- │   │    └── /payment
- │   │         ├── payment.services.ts   # Business logic for payments
- │   │         ├── payment.router.ts     # API routes for payments
- │   │         ├── payment.model.ts      # Mongoose schema for payments
- │   │         ├── payment.interface.ts  # Interface for payments
- │   │         └── payment.controller.ts # Controller for payment endpoints
- │   │
- │   ├── /router
- │   │    └── router.ts                  # Main router combining all module routes
- │   │
- │   ├── /utils
- │   │    ├── sendResponse.ts            # Utility for sending consistent API responses
- │   │    └── catchAsync.ts              # Wrapper to catch async errors
- │
- ├── app.ts           # Core application setup
- ├── server.ts        # Server setup and initialization
+
+/server
+  ├── /config           # Configuration files (e.g., database, environment variables)
+  │    ├── db.js         # MongoDB connection setup
+  │    └── cloudinary.js # Cloudinary configuration for image uploads
+  │
+  ├── /controllers      # Logic for handling requests and responses
+  │    ├── authController.js  # User authentication and authorization logic
+  │    ├── postController.js  # CRUD operations for posts
+  │    ├── commentController.js # CRUD operations for comments
+  │    ├── userController.js   # User profile management logic
+  │    └── paymentController.js # Stripe payment handling
+  │
+  ├── /models           # Mongoose schemas for MongoDB collections
+  │    ├── User.js       # User schema
+  │    ├── Post.js       # Post schema
+  │    ├── Comment.js    # Comment schema
+  │    └── Payment.js    # Payment history schema
+  │
+  ├── /routes           # API endpoints for different features
+  │    ├── authRoutes.js  # Authentication-related routes
+  │    ├── postRoutes.js  # Routes for posts
+  │    ├── commentRoutes.js # Routes for comments
+  │    ├── userRoutes.js   # Routes for user-related operations
+  │    └── paymentRoutes.js # Payment-related routes
+  │
+  ├── /middleware       # Middleware functions for validation and error handling
+  │    ├── authMiddleware.js  # JWT authentication middleware
+  │    ├── errorHandler.js    # Global error handler
+  │    └── uploadMiddleware.js # Multer setup for image uploads
+  │
+  ├── /utils            # Utility functions and helpers
+  │    ├── emailHelper.js  # Functions for sending emails
+  │    └── pdfGenerator.js # Functions to generate PDFs
+  │
+  ├── /docs             # API documentation (optional)
+  │    └── api-docs.json  # Swagger or Postman API collection
+  │
+  ├── /tests            # Test files for unit and integration testing
+  │    ├── auth.test.js  # Tests for authentication routes
+  │    └── post.test.js  # Tests for post-related routes
+  │
+  ├── .env              # Environment variables (not included in version control)
+  ├── .gitignore        # Files and folders to ignore in Git
+  ├── package.json      # Node.js dependencies and scripts
+  ├── README.md         # Project documentation
+  └── server.js         # Main entry point of the server
+
 
        
    
