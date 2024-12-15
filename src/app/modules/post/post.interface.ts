@@ -2,6 +2,7 @@ import { Types } from "mongoose";
 
 export interface TPost {
   user: Types.ObjectId;
+  group?: Types.ObjectId;
   image: string;
   text: string;
   premium: boolean;

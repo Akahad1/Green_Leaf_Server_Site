@@ -8,9 +8,7 @@ const app: Application = express();
 
 // Middleware to parse JSON and handle CORS
 app.use(express.json());
-app.use(
-  cors({ origin: ["https://green-leaf-theta.vercel.app"], credentials: true })
-);
+app.use(cors({ origin: ["http://localhost:3000"], credentials: true }));
 
 // Basic test route
 app.get("/", (req: Request, res: Response) => {

@@ -1,10 +1,8 @@
 import express from "express";
 import { userController } from "./user.controller";
 
-import { UserValidation } from "./user.validation";
 import { multerUpload } from "../../config/multer.config";
-import { USER_ROLE } from "./user.constent";
-import auth from "../../middleware/auth";
+
 const router = express.Router();
 
 router.post(
