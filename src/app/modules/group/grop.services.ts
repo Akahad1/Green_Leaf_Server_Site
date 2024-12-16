@@ -3,12 +3,37 @@ import httpStatus from "http-status";
 import { Group } from "./group.model";
 import { AppError } from "../../error/AppError";
 import mongoose from "mongoose";
-import { User } from "../user/user.model";
 
 const createGroupIntoDB = async (payload: any) => {
   const result = await Group.create(payload);
   console.log(result);
   return result;
+};
+const getMyGroupFromDB = async (userId: string) => {
+  const groups = await Group.find({
+    $or: [{ adminId: userId }, { members: userId }],
+  });
+
+  return groups;
+};
+const getSpecificGroupFromDB = async (userId: string, groupId: string) => {
+  console.log(userId);
+  const groups = await Group.find({
+    $or: [{ adminId: userId }, { members: userId }],
+  });
+  const specificGroup = groups.find(
+    (group) => group._id.toString() === groupId
+  );
+
+  return specificGroup;
+};
+const getGroupsWhereNotInvolvedFromDB = async (userId: string) => {
+  console.log(userId);
+  const groups = await Group.find({
+    $nor: [{ admin: userId }, { members: userId }],
+  });
+
+  return groups;
 };
 const groupInviteIntoDB = async (userId: string, groupId: string) => {
   const group = await Group.findById(groupId);
@@ -61,4 +86,7 @@ export const groupServices = {
   groupInviteIntoDB,
   memberApprovalIntoDB,
   createGroupIntoDB,
+  getMyGroupFromDB,
+  getGroupsWhereNotInvolvedFromDB,
+  getSpecificGroupFromDB,
 };

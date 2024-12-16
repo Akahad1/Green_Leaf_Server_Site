@@ -13,6 +13,36 @@ const createGroup = catchAsync(async (req, res) => {
     data: result,
   });
 });
+const getMyGroup = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const result = await groupServices.getMyGroupFromDB(id);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Get Group  successfully",
+    data: result,
+  });
+});
+const getSpecificGroup = catchAsync(async (req, res) => {
+  const { userId, groupId } = req.params;
+  const result = await groupServices.getSpecificGroupFromDB(userId, groupId);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Get Specific Group  successfully",
+    data: result,
+  });
+});
+const getGroupsWhereNotInvolved = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const result = await groupServices.getGroupsWhereNotInvolvedFromDB(id);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Get Group  successfully",
+    data: result,
+  });
+});
 const groupsInvite = catchAsync(async (req, res) => {
   const groupId = req.params.id;
   const { userId } = req.body;
@@ -44,4 +74,7 @@ export const groupController = {
   groupsInvite,
   memberApproval,
   createGroup,
+  getMyGroup,
+  getGroupsWhereNotInvolved,
+  getSpecificGroup,
 };
