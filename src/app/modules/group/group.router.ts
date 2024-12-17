@@ -6,7 +6,7 @@ router.get("/:id", groupController.getMyGroup);
 router.get("/:userId/group/:groupId", groupController.getSpecificGroup);
 router.put("/:userId/group/:groupId", groupController.updateSpecificGroup);
 router.get("/not-involved/:id", groupController.getGroupsWhereNotInvolved);
-router.post("/invite/:id", groupController.groupsInvite);
-router.post("/:groupId/invite/:requestId", groupController.memberApproval);
+router.post("/invite/:id/:userId", groupController.groupsInvite);
+router.post("/:groupId/approv/:requestId", groupController.memberApproval);
 
 export const groupRouter = router;

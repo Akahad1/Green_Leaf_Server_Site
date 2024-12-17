@@ -3,6 +3,7 @@ import httpStatus from "http-status";
 import { Group } from "./group.model";
 import { AppError } from "../../error/AppError";
 import mongoose from "mongoose";
+import { User } from "../user/user.model";
 
 const createGroupIntoDB = async (payload: any) => {
   const result = await Group.create(payload);
@@ -21,21 +22,60 @@ const getSpecificGroupFromDB = async (userId: string, groupId: string) => {
   const groups = await Group.find({
     $or: [{ adminId: userId }, { members: userId }],
   });
-  const specificGroup = groups.find(
-    (group) => group._id.toString() === groupId
-  );
+  const specificGroup = (
+    await groups
+      .find((group) => group._id.toString() === groupId)
+      ?.populate({
+        path: "invitationRequests.user",
+        select: "name image _id",
+      })
+  )?.populate({
+    path: "members",
+    select: "name image _id",
+  });
 
   return specificGroup;
+};
+const updateSpecificGroupFromDB = async (
+  userId: string,
+  groupId: string,
+  payload: any
+) => {
+  console.log(userId);
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new AppError(httpStatus.BAD_REQUEST, "User not found");
+  }
+  const updatedGroup = await Group.findOneAndUpdate(
+    {
+      _id: groupId,
+      adminId: userId,
+    },
+    {
+      $set: payload, // Update fields with payload
+    },
+    {
+      new: true,
+    }
+  );
+
+  if (!updatedGroup) {
+    throw new Error(
+      "Admin has not given you permission or the group could not be found."
+    );
+  }
+
+  return updatedGroup;
 };
 const getGroupsWhereNotInvolvedFromDB = async (userId: string) => {
   console.log(userId);
   const groups = await Group.find({
-    $nor: [{ admin: userId }, { members: userId }],
+    $nor: [{ adminId: userId }, { members: userId }],
   });
 
   return groups;
 };
-const groupInviteIntoDB = async (userId: string, groupId: string) => {
+const groupInviteIntoDB = async (groupId: string, userId: string) => {
   const group = await Group.findById(groupId);
   if (!group) {
     throw new AppError(httpStatus.NOT_FOUND, "Group is not exist");
@@ -50,17 +90,18 @@ const groupInviteIntoDB = async (userId: string, groupId: string) => {
     );
   }
 
-  group.invitationRequests.push({
+  const result = group.invitationRequests.push({
     user: new mongoose.Types.ObjectId(userId),
     status: "pending",
   });
-  const result = await group.save();
+  await group.save();
   return result;
 };
 
 const memberApprovalIntoDB = async (
-  requestId: string,
   groupId: string,
+  requestId: string,
+
   action: any
 ) => {
   const group = await Group.findById(groupId);
@@ -89,4 +130,5 @@ export const groupServices = {
   getMyGroupFromDB,
   getGroupsWhereNotInvolvedFromDB,
   getSpecificGroupFromDB,
+  updateSpecificGroupFromDB,
 };
