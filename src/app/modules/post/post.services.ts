@@ -30,16 +30,32 @@ const getPostFromDB = async (querys: any) => {
     query.premium = premium === "true"; // Convert premium to a boolean
   }
 
-  const result = await Post.find(query)
-    .populate("user")
-    .sort({ upvote: -1 }); // Sort by upvotes in descending order
+  const result = await Post.find(query).populate("user").sort({ upvote: -1 }); // Sort by upvotes in descending order
   return result;
 };
 
 const getSpacificPostFromDB = async (id: string) => {
-  const result = await Post.find({ user: id }).populate("user");
+  const result = await Post.find({
+    user: id,
+    group: { $exists: false },
+  }).populate("user");
   return result;
 };
+const getGroupPostFromDB = async (id: string) => {
+  const result = await Post.find({
+    group: id,
+  }).populate("user");
+  return result;
+};
+const getAllGroupPostFromDB = async () => {
+  const result = await Post.find({ group: { $exists: true, $ne: null } })
+    .sort({ createdAt: -1 })
+    .populate("user")
+    .populate("group")
+    .exec();
+  return result;
+};
+
 const deleteSpacificPostFromDB = async (id: string) => {
   const result = await Post.findByIdAndDelete(id);
   return result;
@@ -109,4 +125,6 @@ export const PostServices = {
   getSpacificPostFromDB,
   updatePostFromDB,
   deleteSpacificPostFromDB,
+  getGroupPostFromDB,
+  getAllGroupPostFromDB,
 };

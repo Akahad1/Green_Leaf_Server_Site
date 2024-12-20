@@ -37,6 +37,25 @@ const getSpacificPost = catchAsync(async (req, res) => {
     data: result,
   });
 });
+const getGroupPost = catchAsync(async (req, res) => {
+  const { groupId } = req.params;
+  const result = await PostServices.getGroupPostFromDB(groupId);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Get Group Post  Successfully",
+    data: result,
+  });
+});
+const getAllGroupPost = catchAsync(async (req, res) => {
+  const result = await PostServices.getAllGroupPostFromDB();
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Get All Group Post  Successfully",
+    data: result,
+  });
+});
 const deleteSpacificPost = catchAsync(async (req, res) => {
   const id = req.params.id;
   const result = await PostServices.deleteSpacificPostFromDB(id);
@@ -65,4 +84,6 @@ export const postController = {
   getSpacificPost,
   updateSpacificPost,
   deleteSpacificPost,
+  getGroupPost,
+  getAllGroupPost,
 };

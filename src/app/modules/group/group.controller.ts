@@ -35,7 +35,7 @@ const getSpecificGroup = catchAsync(async (req, res) => {
 });
 const updateSpecificGroup = catchAsync(async (req, res) => {
   const { userId, groupId } = req.params;
-
+  console.log(req.body);
   const result = await groupServices.updateSpecificGroupFromDB(
     userId,
     groupId,

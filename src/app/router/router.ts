@@ -4,6 +4,7 @@ import { postRouter } from "../modules/post/post.route";
 import { commentRouter } from "../modules/comment/comment.router";
 import { paymentRoute } from "../modules/payment/payment.router";
 import { groupRouter } from "../modules/group/group.router";
+import { NotificationRouter } from "../modules/notification/notification.router";
 
 const router = Router();
 
@@ -27,6 +28,10 @@ const moduleRoute = [
   {
     path: "/groups",
     route: groupRouter,
+  },
+  {
+    path: "/notification",
+    route: NotificationRouter,
   },
 ];
 
