@@ -6,7 +6,7 @@ import { globalErrorHandler } from "./app/middleware/globalErrorhandler";
 import { initSocket } from "./app/middleware/socket";
 
 const app: Application = express();
-const server = http.createServer(app);
+// const server = http.createServer(app);
 // Middleware to parse JSON and handle CORS
 app.use(express.json());
 app.use(cors({ origin: ["http://localhost:3000"], credentials: true }));
@@ -20,5 +20,5 @@ app.get("/", (req: Request, res: Response) => {
 app.use("/api/a6", router);
 
 app.use(globalErrorHandler);
-initSocket(server);
+// initSocket(server);
 export default app;

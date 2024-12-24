@@ -16,6 +16,7 @@ router.post(
 router.get("/", postController.getPost);
 router.get("/:id", postController.getSpacificPost);
 router.get("/group-post/:groupId", postController.getGroupPost);
+router.get("/group/allpost", postController.getAllGroupPost);
 router.put("/:id", postController.updateSpacificPost);
 router.delete("/:id", postController.deleteSpacificPost);
 export const postRouter = router;

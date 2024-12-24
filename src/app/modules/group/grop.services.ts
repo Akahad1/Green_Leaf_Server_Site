@@ -68,14 +68,14 @@ const updateSpecificGroupFromDB = async (
   return updatedGroup;
 };
 const getGroupsWhereNotInvolvedFromDB = async (userId: string) => {
-  console.log(userId);
   const groups = await Group.find({
-    $nor: [{ adminId: userId }, { members: userId }],
+    $and: [{ adminId: { $ne: userId } }, { members: { $ne: userId } }],
   });
 
   return groups;
 };
 const groupInviteIntoDB = async (groupId: string, userId: string) => {
+  console.log("groupID", groupId, "userID", userId);
   const group = await Group.findById(groupId);
   if (!group) {
     throw new AppError(httpStatus.NOT_FOUND, "Group is not exist");
@@ -119,6 +119,9 @@ const memberApprovalIntoDB = async (
     group.members.push(request.user);
   } else if (action === "reject") {
     request.status = "rejected";
+    group.invitationRequests = group.invitationRequests.filter(
+      (request) => !request.user.equals(request.user._id)
+    );
   }
   const result = await group.save();
   return result;

@@ -48,7 +48,7 @@ const getGroupPostFromDB = async (id: string) => {
   return result;
 };
 const getAllGroupPostFromDB = async () => {
-  const result = await Post.find({ group: { $exists: true, $ne: null } })
+  const result = await Post.find({ group: { $exists: true, $ne: null } }) //
     .sort({ createdAt: -1 })
     .populate("user")
     .populate("group")
